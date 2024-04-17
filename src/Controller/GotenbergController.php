@@ -24,11 +24,16 @@ class GotenbergController extends AbstractController
 
         try {
             $this->gotenbergService->convertUrlToPdf($url, $outputPath);
-            return new Response('Conversion réussie.');
+
+            $pdfContent = file_get_contents($outputPath);
+
+            $response = new Response($pdfContent);
+            $response->headers->set('Content-Type', 'application/pdf');
+            $response->headers->set('Content-Disposition', 'inline; filename="my.pdf"');
+
+            return $response;
         } catch (\Exception $e) {
             return new Response('Conversion non réussie.');
         }
-
-
     }
 }
