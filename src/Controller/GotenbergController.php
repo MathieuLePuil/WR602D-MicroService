@@ -19,7 +19,7 @@ class GotenbergController extends AbstractController
     #[Route('/convert', name: 'convert')]
     public function convert(): Response
     {
-        $url = 'https://sparksuite.github.io/simple-html-invoice-template/';
+        $url = 'https://mathieulp.fr/';
         $outputPath = $this->getParameter('kernel.project_dir').'/public/my.pdf';
 
         try {
@@ -29,7 +29,6 @@ class GotenbergController extends AbstractController
 
             $response = new Response($pdfContent);
             $response->headers->set('Content-Type', 'application/pdf');
-            $response->headers->set('Content-Disposition', 'inline; filename="my.pdf"');
 
             return $response;
         } catch (\Exception $e) {
