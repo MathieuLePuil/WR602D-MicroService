@@ -18,6 +18,9 @@ class GotenbergService
     {
         try {
             $response = $this->client->request('POST', 'https://demo.gotenberg.dev/forms/chromium/convert/url', [
+                'headers' => [
+                    'Content-Type' => 'multipart/form-data'
+                ],
                 'body' => [
                     'url' => $url
                 ]
