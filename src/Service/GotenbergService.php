@@ -2,22 +2,25 @@
 
 namespace App\Service;
 
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class GotenbergService
 {
     private $client;
+    private $apiUrl;
 
-    public function __construct(HttpClientInterface $client)
+    public function __construct(HttpClientInterface $client, ParameterBagInterface $params)
     {
         $this->client = $client;
+        $this->apiUrl = $params->get('api_url');
     }
 
     public function convertUrlToPdf(string $url, string $outputPath): void
     {
         try {
-            $response = $this->client->request('POST', 'https://demo.gotenberg.dev/forms/chromium/convert/url', [
+            $response = $this->client->request('POST', $this->apiUrl, [
                 'headers' => [
                     'Content-Type' => 'multipart/form-data'
                 ],
