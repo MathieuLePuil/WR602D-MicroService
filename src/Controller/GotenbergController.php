@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\GotenbergService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -16,10 +17,16 @@ class GotenbergController extends AbstractController
         $this->gotenbergService = $gotenbergService;
     }
 
-    #[Route('/convert', name: 'convert')]
-    public function convert(): Response
+    #[Route('/api/convert', name: 'api_convert', methods: ['POST'])]
+    public function apiConvert(Request $request): Response
     {
-        $url = 'https://mathieulp.fr/';
+        $data = json_decode($request->getContent(), true);
+        $url = $data['url'] ?? null;
+
+        if (!$url) {
+            return new JsonResponse(['error' => 'URL is required'], Response::HTTP_BAD_REQUEST);
+        }
+
         $outputPath = $this->getParameter('kernel.project_dir').'/public/my.pdf';
 
         try {
@@ -32,7 +39,7 @@ class GotenbergController extends AbstractController
 
             return $response;
         } catch (\Exception $e) {
-            return new Response('Conversion non réussie.');
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
