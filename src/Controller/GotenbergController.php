@@ -6,6 +6,7 @@ use App\Service\GotenbergService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class GotenbergController extends AbstractController
@@ -32,12 +33,9 @@ class GotenbergController extends AbstractController
         try {
             $this->gotenbergService->convertUrlToPdf($url, $outputPath);
 
-            $pdfContent = file_get_contents($outputPath);
+            $pdfUrl = $request->getSchemeAndHttpHost().'/my.pdf';
 
-            $response = new Response($pdfContent);
-            $response->headers->set('Content-Type', 'application/pdf');
-
-            return $response;
+            return new JsonResponse(['pdf_url' => $pdfUrl]);
         } catch (\Exception $e) {
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
