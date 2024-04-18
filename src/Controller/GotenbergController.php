@@ -28,12 +28,13 @@ class GotenbergController extends AbstractController
             return new JsonResponse(['error' => 'URL is required'], Response::HTTP_BAD_REQUEST);
         }
 
-        $outputPath = $this->getParameter('kernel.project_dir').'/public/my.pdf';
+        $filename = uniqid('pdf_', true) . '.pdf';
+        $outputPath = $this->getParameter('kernel.project_dir').'/public/'.$filename;
 
         try {
             $this->gotenbergService->convertUrlToPdf($url, $outputPath);
 
-            $pdfUrl = $request->getSchemeAndHttpHost().'/my.pdf';
+            $pdfUrl = $request->getSchemeAndHttpHost().'/'.$filename;
 
             return new JsonResponse(['pdf_url' => $pdfUrl]);
         } catch (\Exception $e) {
